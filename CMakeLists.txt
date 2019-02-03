@@ -15,6 +15,9 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -fno-rtti -fno-exceptions")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
 add_library(xtl INTERFACE)
+target_include_directories(xtl INTERFACE "${CMAKE_SOURCE_DIR}/include")
+
+
+add_subdirectory(test)
+
