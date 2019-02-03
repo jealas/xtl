@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include <xtl/function_view.h>
+#include <xtl/delegate.h>
 
 bool true_fn() {
     return true;
@@ -15,12 +15,14 @@ struct member_fn {
     bool false_call() { return false; }
 };
 
-TEST_CASE("Test function view can instantiated", "[xtl][function_view]") {
+using predicate = xtl::delegate<bool()>;
+
+TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
     SECTION("C++ functions") {
-        xtl::function_view<bool()> true_function{true_fn};
+        predicate true_function{true_fn};
         REQUIRE(true_function());
 
-        xtl::function_view<bool()> false_function{false_fn};
+        predicate false_function{false_fn};
         REQUIRE(!false_function());
     }
 
@@ -28,10 +30,13 @@ TEST_CASE("Test function view can instantiated", "[xtl][function_view]") {
     }
 
     SECTION("Class member function") {
-        member_fn true_call;
+        member_fn member;
 
-        xtl::function_view<bool()> true_function{&member_fn::true_call, true_call};
+        predicate true_function{&member_fn::true_call, member};
         REQUIRE(true_function());
+
+        predicate false_function{&member_fn::false_call, member};
+        REQUIRE(!false_function());
     }
 }
 
