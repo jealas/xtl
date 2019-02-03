@@ -37,7 +37,7 @@ namespace xtl {
         delegate(Callable &callable, ReturnT (Callable::*member_fn)(Args...)) noexcept
             : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(member_fn)}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
-        template <class Callable, class = typename enable_if<not is_same<Callable, delegate<ReturnT(Args...)>>::value>::type>
+        template <class Callable, class = enable_if_t<not is_same_v<Callable, delegate<type>>>>
         delegate(Callable &callable) noexcept
             : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(&Callable::operator())}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
