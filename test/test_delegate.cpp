@@ -32,10 +32,10 @@ TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
     SECTION("Class member function") {
         member_fn member;
 
-        predicate true_function{&member_fn::true_call, member};
+        predicate true_function{member, &member_fn::true_call};
         REQUIRE(true_function());
 
-        predicate false_function{&member_fn::false_call, member};
+        predicate false_function{member, &member_fn::false_call};
         REQUIRE(!false_function());
     }
 }

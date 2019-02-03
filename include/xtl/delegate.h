@@ -6,7 +6,6 @@ namespace xtl {
 
     template <class ReturnT, class ... Args>
     class delegate<ReturnT(Args...)> {
-
         struct Void {
         };
 
@@ -29,7 +28,7 @@ namespace xtl {
             : delegate_{&function_ptr_delegate}, function_{reinterpret_cast<function_ptr_t>(fn)}, storage_{nullptr} {}
 
         template <class Callable>
-        delegate(ReturnT (Callable::*member_fn)(Args...), Callable &callable)
+        delegate(Callable &callable, ReturnT (Callable::*member_fn)(Args...))
             : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(member_fn)}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
         ReturnT operator()(Args... args) const {
