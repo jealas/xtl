@@ -18,6 +18,5 @@ set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 add_library(xtl INTERFACE)
 target_include_directories(xtl INTERFACE "${CMAKE_SOURCE_DIR}/include")
 
-
 add_subdirectory(test)
 

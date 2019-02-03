@@ -1,15 +1,22 @@
 #pragma once
 
+#include <xtl/type_traits.h>
+
+
 namespace xtl {
     template <class FunctionT>
     class delegate;
 
     template <class ReturnT, class ... Args>
     class delegate<ReturnT(Args...)> {
+    public:
+        using type = ReturnT(Args...);
+
+    private:
         struct Void {};
 
-        typedef ReturnT(*function_ptr_t)(Args...);
-        typedef ReturnT(Void::*member_function_ptr_t)(Args...);
+        using function_ptr_t = type*;
+        using member_function_ptr_t = ReturnT(Void::*)(Args...);
 
         union function_t {
             explicit function_t(function_ptr_t fn_ptr) : function_ptr{fn_ptr} {}
@@ -20,25 +27,25 @@ namespace xtl {
         };
 
         using storage_t = void*;
-        typedef ReturnT(*delegate_t)(function_t, storage_t, Args...);
+        using delegate_t = ReturnT(*)(function_t, storage_t, Args...);
 
     public:
-        delegate(ReturnT(*fn)(Args...))
+        delegate(ReturnT(*fn)(Args...)) noexcept
             : delegate_{&function_ptr_delegate}, function_{reinterpret_cast<function_ptr_t>(fn)}, storage_{nullptr} {}
 
         template <class Callable>
-        delegate(Callable &callable, ReturnT (Callable::*member_fn)(Args...))
+        delegate(Callable &callable, ReturnT (Callable::*member_fn)(Args...)) noexcept
             : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(member_fn)}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
-        template <class Callable>
-        delegate(Callable &callable)
-            : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(&Callable::operator())}, storage_(reinterpret_cast<storage_t>(&callable)) {}
+        template <class Callable, class = typename enable_if<not is_same<Callable, delegate<ReturnT(Args...)>>::value>::type>
+        delegate(Callable &callable) noexcept
+            : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(&Callable::operator())}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
-        delegate(delegate&) = delete;
-        delegate &operator=(delegate&) = delete;
+        delegate(const delegate&) noexcept = default;
+        delegate(delegate&&) noexcept = default;
 
-        delegate(delegate&&) = delete;
-        delegate &operator=(delegate&&) = delete;
+        delegate &operator=(const delegate&) noexcept = default;
+        delegate &operator=(delegate&&) noexcept = default;
 
         ReturnT operator()(Args... args) const {
             return delegate_(function_, storage_, args...);
