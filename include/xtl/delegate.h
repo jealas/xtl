@@ -54,5 +54,4 @@ namespace xtl {
         function_t function_;
         storage_t storage_;
     };
-
 }

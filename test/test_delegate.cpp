@@ -25,6 +25,14 @@ struct callable {
     }
 };
 
+extern "C" bool true_c_fn() {
+    return true;
+}
+
+extern "C" bool false_c_fn() {
+    return false;
+}
+
 TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
     SECTION("C++ functions") {
         predicate true_function{true_fn};
@@ -35,6 +43,11 @@ TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
     }
 
     SECTION("C functions") {
+        predicate true_function{true_c_fn};
+        REQUIRE(true_function());
+
+        predicate false_function{false_c_fn};
+        REQUIRE(!false_function());
     }
 
     SECTION("Class member function") {
