@@ -1,6 +1,10 @@
 #include "catch.hpp"
 
+#include <memory>
+
 #include <xtl/delegate.h>
+
+using predicate = xtl::delegate<bool()>;
 
 bool true_fn() {
     return true;
@@ -14,8 +18,6 @@ struct member_fn {
     bool true_call() { return true; }
     bool false_call() { return false; }
 };
-
-using predicate = xtl::delegate<bool()>;
 
 struct callable {
     bool value;
@@ -32,6 +34,22 @@ extern "C" bool true_c_fn() {
 extern "C" bool false_c_fn() {
     return false;
 }
+
+struct virtual_callable {
+    virtual bool operator()() = 0;
+};
+
+struct virtual_true_callable : virtual_callable {
+    bool operator()() override {
+        return true;
+    }
+};
+
+struct virtual_false_callable : virtual_callable {
+    bool operator()() override {
+        return false;
+    }
+};
 
 TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
     SECTION("C++ functions") {
@@ -68,6 +86,18 @@ TEST_CASE("Test delegate can instantiated", "[xtl][delegate]") {
 
         callable false_callable{false};
         predicate false_function{false_callable};
+
+        REQUIRE(!false_function());
+    }
+
+    SECTION("Virtual callable call") {
+        std::unique_ptr<virtual_callable> virtual_true_function{new virtual_true_callable()};
+        predicate true_function{*virtual_true_function};
+
+        REQUIRE(true_function());
+
+        std::unique_ptr<virtual_callable> virtual_false_function{new virtual_false_callable()};
+        predicate false_function{*virtual_false_function};
 
         REQUIRE(!false_function());
     }
