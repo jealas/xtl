@@ -9,7 +9,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("char range") {
         char start = 0;
-        for (const auto i : xtl::range<char, Begin, End>) {
+        for (const auto i : xtl::crange<char, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -18,7 +18,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("signed char range") {
         signed char start = 0;
-        for (const auto i : xtl::range<signed char, Begin, End>) {
+        for (const auto i : xtl::crange<signed char, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -27,7 +27,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("unsigned char range") {
         unsigned char start = 0;
-        for (const auto i : xtl::range<unsigned char, Begin, End>) {
+        for (const auto i : xtl::crange<unsigned char, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -36,7 +36,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("short range") {
         short start = 0;
-        for (const auto i : xtl::range<short, Begin, End>) {
+        for (const auto i : xtl::crange<short, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -45,7 +45,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("unsigned short range") {
         unsigned short start = 0;
-        for (const auto i : xtl::range<unsigned short, Begin, End>) {
+        for (const auto i : xtl::crange<unsigned short, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -54,7 +54,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("int range") {
         int start = 0;
-        for (const auto i : xtl::int_range<Begin, End>) {
+        for (const auto i : xtl::int_crange<Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -63,7 +63,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("unsigned range") {
         unsigned start = 0;
-        for (const auto i : xtl::unsigned_range<Begin, End>) {
+        for (const auto i : xtl::unsigned_crange<Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -72,7 +72,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("long range") {
         long start = 0;
-        for (const auto i : xtl::range<long, Begin, End>) {
+        for (const auto i : xtl::crange<long, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -81,7 +81,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("long long range") {
         long long start = 0;
-        for (const auto i : xtl::range<long long, Begin, End>) {
+        for (const auto i : xtl::crange<long long, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -90,7 +90,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("unsigned long long range") {
         unsigned long long start = 0;
-        for (const auto i : xtl::range<unsigned long long, Begin, End>) {
+        for (const auto i : xtl::crange<unsigned long long, Begin, End>) {
             REQUIRE(start++ == i);
         }
 
@@ -99,7 +99,7 @@ TEST_CASE("Range iterates over the currect values", "[xtl][range]") {
 
     SECTION("size_t range") {
         size_t start = 0;
-        for (const auto i : xtl::size_range<Begin, End>) {
+        for (const auto i : xtl::size_crange<Begin, End>) {
             REQUIRE(start++ == i);
         }
 
