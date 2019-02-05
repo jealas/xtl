@@ -1,6 +1,7 @@
 add_executable(test_xtl
         test_xtl_main.cpp
         test_delegate.cpp
+        test_range.cpp
 )
 
 include_directories(
