@@ -17,14 +17,14 @@ namespace xtl {
         memory_ptr &operator=(const memory_ptr&) = delete;
         memory_ptr &operator=(memory_ptr&&) = delete;
 
-        constexpr T* data() { return reinterpret_cast<T*>(StartMemoryAddress); }
-        constexpr T const * data() const { return reinterpret_cast<T*>(StartMemoryAddress); }
+        constexpr T* get() { return reinterpret_cast<T*>(StartMemoryAddress); }
+        constexpr T const * get() const { return reinterpret_cast<T*>(StartMemoryAddress); }
 
-        constexpr T* operator->() { return data(); }
-        constexpr T const * operator->() const { return data(); }
+        constexpr T* operator->() { return get(); }
+        constexpr T const * operator->() const { return get(); }
 
-        constexpr T& operator*() noexcept { return *data(); }
-        constexpr const T& operator*() const noexcept { return *data(); }
+        constexpr T& operator*() noexcept { return *get(); }
+        constexpr const T& operator*() const noexcept { return *get(); }
     };
 
     template <size_t StartMemoryAddress, size_t EndMemoryAddress, size_t N, class T>
@@ -41,22 +41,22 @@ namespace xtl {
         memory_ptr &operator=(const memory_ptr&) = delete;
         memory_ptr &operator=(memory_ptr&&) = delete;
 
-        constexpr T* data() { return reinterpret_cast<T*>(StartMemoryAddress); }
-        constexpr T const * data() const { return reinterpret_cast<T const *>(StartMemoryAddress); }
+        constexpr T* get() { return reinterpret_cast<T*>(StartMemoryAddress); }
+        constexpr T const * get() const { return reinterpret_cast<T const *>(StartMemoryAddress); }
 
-        constexpr T* begin() { return data(); }
-        constexpr T const * begin() const { return data(); }
+        constexpr T* begin() { return get(); }
+        constexpr T const * begin() const { return get(); }
 
-        constexpr T* end() { return data() + N; }
-        constexpr T const * end() const { return data() + N; }
+        constexpr T* end() { return get() + N; }
+        constexpr T const * end() const { return get() + N; }
 
-        constexpr T* operator->() { return data(); }
-        constexpr T const * operator->() const { return data(); }
+        constexpr T* operator->() { return get(); }
+        constexpr T const * operator->() const { return get(); }
 
-        constexpr T& operator*() noexcept { return *data(); }
-        constexpr const T& operator*() const noexcept { return *data(); }
+        constexpr T& operator*() noexcept { return *get(); }
+        constexpr const T& operator*() const noexcept { return *get(); }
 
-        constexpr T& operator[](const size_t i) noexcept { return *(data() + i); }
-        constexpr const T& operator[](const size_t i) const noexcept { return *(data() + i); }
+        constexpr T& operator[](const size_t i) noexcept { return *(get() + i); }
+        constexpr const T& operator[](const size_t i) const noexcept { return *(get() + i); }
     };
 }
