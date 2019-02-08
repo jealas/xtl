@@ -134,4 +134,8 @@ namespace xtl {
 
     template <class T>
     using remove_pointer_t = typename remove_pointer<T>::type;
+
+    // Void
+    template<typename...> struct make_void { using type = void; };
+    template<typename... Ts> using void_t = typename make_void<Ts...>::type;
 }
