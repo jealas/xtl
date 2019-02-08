@@ -13,33 +13,34 @@ namespace xtl {
         using type = ReturnT(Args...);
 
     private:
-        struct Void {};
-
+        using storage_t = void*;
+        using delegate_t = ReturnT(*)(storage_t, Args...);
         using function_ptr_t = type*;
-        using member_function_ptr_t = ReturnT(Void::*)(Args...);
 
         union function_t {
             constexpr explicit function_t(function_ptr_t fn_ptr) : function_ptr{fn_ptr} {}
-            constexpr explicit function_t(member_function_ptr_t member_fn_ptr) : member_function_ptr{member_fn_ptr} {}
+            constexpr explicit function_t(delegate_t d_ptr) : delegate_ptr{d_ptr} {}
 
             function_ptr_t function_ptr;
-            member_function_ptr_t member_function_ptr;
+            delegate_t delegate_ptr;
         };
-
-        using storage_t = void*;
-        using delegate_t = ReturnT(*)(function_t, storage_t, Args...);
 
     public:
         constexpr delegate(ReturnT(*fn)(Args...)) noexcept
-            : delegate_{nullptr}, function_{fn}, storage_{nullptr} {}
+            : function_{fn}, storage_{nullptr} {}
 
-        template <class Callable>
-        constexpr delegate(Callable &callable, ReturnT (Callable::*member_fn)(Args...)) noexcept
-            : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(member_fn)}, storage_{reinterpret_cast<storage_t>(&callable)} {}
+        template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...)>
+        static delegate<type> make(Callable &callable) {
+            return {callable, &member_function_ptr_delegate<Callable, MemberFunctionPtr>};
+        }
+
+        template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...) const>
+        static delegate<type> make(Callable &callable) {
+            return {callable, &member_function_ptr_delegate<Callable, MemberFunctionPtr>};
+        }
 
         template <class Callable, class = enable_if_t<not is_same_v<Callable, delegate<type>>>>
-        constexpr delegate(Callable &callable) noexcept
-            : delegate_{&member_function_ptr_delegate<Callable>}, function_{reinterpret_cast<member_function_ptr_t>(&Callable::operator())}, storage_{reinterpret_cast<storage_t>(&callable)} {}
+        constexpr delegate(Callable &callable) noexcept : delegate{callable, &member_function_ptr_delegate<Callable, &Callable::operator()>} {}
 
         constexpr delegate(const delegate&) noexcept = default;
         constexpr delegate(delegate&&) noexcept = default;
@@ -48,23 +49,29 @@ namespace xtl {
         constexpr delegate &operator=(delegate&&) noexcept = default;
 
         constexpr ReturnT operator()(Args... args) const {
-            if (!delegate_) {
+            if (!storage_) {
                 return function_.function_ptr(args...);
             }
-            return delegate_(function_, storage_, args...);
+            return function_.delegate_ptr(storage_, args...);
         }
 
     private:
         template <class Callable>
-        constexpr static ReturnT member_function_ptr_delegate(function_t function, storage_t storage, Args... args) {
-            static_assert(sizeof(ReturnT(Void::*)(Args...)) == sizeof(ReturnT(Callable::*)(Args...)),
-                    "This compiler is non-standards compliant and pointers to member functions are not guaranteed to be the same size for all types.");
+        constexpr delegate(Callable &callable, delegate_t delegate) noexcept
+                : function_{delegate}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
+        template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...)>
+        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args... args) {
             auto *callable_ptr = reinterpret_cast<Callable*>(storage);
-            return (callable_ptr->*reinterpret_cast<ReturnT(Callable::*)(Args...)>(function.member_function_ptr))(args...);
+            return (callable_ptr->*MemberFunctionPtr)(args...);
         }
 
-        delegate_t delegate_;
+        template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...) const>
+        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args... args) {
+            auto *callable_ptr = reinterpret_cast<Callable*>(storage);
+            return (callable_ptr->*MemberFunctionPtr)(args...);
+        }
+
         function_t function_;
         storage_t storage_;
     };
