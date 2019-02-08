@@ -15,8 +15,8 @@ bool false_fn() {
 }
 
 struct member_fn {
-    bool true_call() { return true; }
-    bool false_call() { return false; }
+    bool true_call() const { return true; }
+    bool false_call() const { return false; }
 };
 
 struct callable {
@@ -36,17 +36,17 @@ extern "C" bool false_c_fn() {
 }
 
 struct virtual_callable {
-    virtual bool operator()() = 0;
+    virtual bool operator()() const = 0;
 };
 
 struct virtual_true_callable : virtual_callable {
-    bool operator()() override {
+    bool operator()() const override {
         return true;
     }
 };
 
 struct virtual_false_callable : virtual_callable {
-    bool operator()() override {
+    bool operator()() const override {
         return false;
     }
 };
@@ -71,10 +71,10 @@ TEST_CASE("Delegate can instantiated", "[xtl][delegate]") {
     SECTION("Class member function") {
         member_fn member;
 
-        predicate true_function{member, &member_fn::true_call};
+        predicate true_function = predicate::make<member_fn, &member_fn::true_call>(member);
         REQUIRE(true_function());
 
-        predicate false_function{member, &member_fn::false_call};
+        predicate false_function = predicate::make<member_fn, &member_fn::false_call>(member);
         REQUIRE(!false_function());
     }
 
@@ -113,6 +113,14 @@ TEST_CASE("Delegate can instantiated", "[xtl][delegate]") {
         auto false_lambda = [&]() { return f; };
 
         predicate false_function{false_lambda};
+        REQUIRE(!false_function());
+    }
+
+    SECTION("Function pointer from lambda") {
+        predicate true_function{+[]() { return true; }};
+        REQUIRE(true_function());
+
+        predicate false_function{+[]() { return false; }};
         REQUIRE(!false_function());
     }
 }
@@ -145,12 +153,12 @@ TEST_CASE("Delegate can be copied", "[xtl][delegate]") {
     SECTION("Class member function") {
         member_fn member;
 
-        predicate true_function{member, &member_fn::true_call};
+        predicate true_function = predicate::make<member_fn, &member_fn::true_call>(member);
         predicate true_function_copy{true_function};
         REQUIRE(true_function());
         REQUIRE(true_function_copy());
 
-        predicate false_function{member, &member_fn::false_call};
+        predicate false_function = predicate::make<member_fn, &member_fn::false_call>(member);
         predicate false_function_copy{false_function};
         REQUIRE(!false_function());
         REQUIRE(!false_function_copy());
@@ -195,6 +203,18 @@ TEST_CASE("Delegate can be copied", "[xtl][delegate]") {
         const auto f = false;
         auto false_lambda = [&]() { return f; };
         predicate false_function{false_lambda};
+        predicate false_function_copy{false_function};
+        REQUIRE(!false_function());
+        REQUIRE(!false_function_copy());
+    }
+
+    SECTION("Function pointer from lambda") {
+        predicate true_function{+[]() { return true; }};
+        predicate true_function_copy{true_function};
+        REQUIRE(true_function());
+        REQUIRE(true_function_copy());
+
+        predicate false_function{+[]() { return false; }};
         predicate false_function_copy{false_function};
         REQUIRE(!false_function());
         REQUIRE(!false_function_copy());
