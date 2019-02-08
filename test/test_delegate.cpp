@@ -115,6 +115,14 @@ TEST_CASE("Delegate can instantiated", "[xtl][delegate]") {
         predicate false_function{false_lambda};
         REQUIRE(!false_function());
     }
+
+    SECTION("Function pointer from lambda") {
+        predicate true_function{+[]() { return true; }};
+        REQUIRE(true_function());
+
+        predicate false_function{+[]() { return false; }};
+        REQUIRE(!false_function());
+    }
 }
 
 TEST_CASE("Delegate can be copied", "[xtl][delegate]") {
@@ -195,6 +203,18 @@ TEST_CASE("Delegate can be copied", "[xtl][delegate]") {
         const auto f = false;
         auto false_lambda = [&]() { return f; };
         predicate false_function{false_lambda};
+        predicate false_function_copy{false_function};
+        REQUIRE(!false_function());
+        REQUIRE(!false_function_copy());
+    }
+
+    SECTION("Function pointer from lambda") {
+        predicate true_function{+[]() { return true; }};
+        predicate true_function_copy{true_function};
+        REQUIRE(true_function());
+        REQUIRE(true_function_copy());
+
+        predicate false_function{+[]() { return false; }};
         predicate false_function_copy{false_function};
         REQUIRE(!false_function());
         REQUIRE(!false_function_copy());
