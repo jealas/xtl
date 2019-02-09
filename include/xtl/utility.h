@@ -19,7 +19,7 @@ namespace xtl {
         struct integer_sequence_builder {
             static_assert(N >= 0, "N should never be < 0");
 
-            using type = xtl::conditional_t<N == 0, integer_sequence<T, 0, CurrentSequence...>, typename integer_sequence_builder<T, I + 1, N, CurrentSequence..., I>::type>;
+            using type = typename integer_sequence_builder<T, I + 1, N, CurrentSequence..., I>::type;
         };
 
         template <class T, T N, T... CurrentSequence>
