@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 
+#include <xtl/algorithm.h>
+
 namespace xtl {
     template <class T, size N>
     class array {
@@ -52,6 +54,8 @@ namespace xtl {
 
         constexpr size_t size() const { return N; }
         constexpr size_t max_size() const { return size(); }
+
+        constexpr void fill(const T &value) noexcept { xtl::fill(begin(), end(), value); }
 
     private:
         T data_[N];
