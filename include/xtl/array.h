@@ -5,7 +5,7 @@
 #include <xtl/algorithm.h>
 
 namespace xtl {
-    template <class T, size N>
+    template <class T, size_t N>
     class array {
         static_assert(N > 0);
 
