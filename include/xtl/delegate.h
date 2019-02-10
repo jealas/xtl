@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xtl/type_traits.h>
+#include <xtl/utility.h>
 
 
 namespace xtl {
@@ -48,11 +49,11 @@ namespace xtl {
         constexpr delegate &operator=(const delegate&) noexcept = default;
         constexpr delegate &operator=(delegate&&) noexcept = default;
 
-        constexpr ReturnT operator()(Args... args) const {
+        constexpr ReturnT operator()(Args&&... args) const {
             if (!storage_) {
-                return function_.function_ptr(args...);
+                return function_.function_ptr(xtl::forward<Args>(args)...);
             }
-            return function_.delegate_ptr(storage_, args...);
+            return function_.delegate_ptr(storage_, xtl::forward<Args>(args)...);
         }
 
     private:
@@ -61,15 +62,15 @@ namespace xtl {
                 : function_{delegate}, storage_{reinterpret_cast<storage_t>(&callable)} {}
 
         template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...)>
-        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args... args) {
+        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args&&... args) {
             auto *callable_ptr = reinterpret_cast<Callable*>(storage);
-            return (callable_ptr->*MemberFunctionPtr)(args...);
+            return (callable_ptr->*MemberFunctionPtr)(xtl::forward<Args>(args)...);
         }
 
         template <class Callable, ReturnT(Callable::*MemberFunctionPtr)(Args...) const>
-        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args... args) {
+        constexpr static ReturnT member_function_ptr_delegate(storage_t storage, Args&&... args) {
             auto *callable_ptr = reinterpret_cast<Callable*>(storage);
-            return (callable_ptr->*MemberFunctionPtr)(args...);
+            return (callable_ptr->*MemberFunctionPtr)(xtl::forward<Args>(args)...);
         }
 
         function_t function_;
