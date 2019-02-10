@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include <xtl/algorithm.h>
+#include <xtl/utility.h>
 
 namespace xtl {
     template <class T, size_t N>
@@ -19,6 +20,9 @@ namespace xtl {
         using const_pointer = const value_type*;
         using iterator = pointer;
         using const_iterator = const iterator;
+
+        template <class... Ts>
+        constexpr array(Ts&&... values) : data_{xtl::forward<Ts>(values)...} {}
 
         template <size_t I>
         constexpr reference at() noexcept {
@@ -45,12 +49,12 @@ namespace xtl {
         constexpr const_pointer data() const noexcept { return data_; }
 
         constexpr iterator begin() noexcept { return data(); }
-        constexpr const_iterator begin() const noexcept { return data(); }
-        constexpr const_iterator cbegin() const noexcept { return begin(); }
+        constexpr iterator begin() const noexcept { return data(); }
+        constexpr iterator cbegin() const noexcept { return begin(); }
 
         constexpr iterator end() noexcept { return data() + N; }
-        constexpr const_iterator end() const noexcept { return data() + N; }
-        constexpr const_iterator cend() const noexcept { return end(); }
+        constexpr iterator end() const noexcept { return data() + N; }
+        constexpr iterator cend() const noexcept { return end(); }
 
         constexpr size_t size() const { return N; }
         constexpr size_t max_size() const { return size(); }

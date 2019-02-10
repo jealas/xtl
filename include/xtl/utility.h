@@ -36,4 +36,15 @@ namespace xtl {
 
     template <class... Ts>
     using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
+
+    // Forward
+    template <class T>
+    constexpr T&& forward(remove_reference_t<T> &value) noexcept {
+        return static_cast<T&&>(value);
+    }
+
+    template <class T>
+    constexpr T&& forward(remove_reference_t<T> &&value) noexcept {
+        return static_cast<T&&>(value);
+    }
 }

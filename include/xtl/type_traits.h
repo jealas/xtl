@@ -201,4 +201,14 @@ namespace xtl {
 
     template <class T>
     constexpr bool is_null_pointer_v = is_null_pointer<T>::value;
+
+    // Is l-value reference
+    template <class T>
+    struct is_lvalue_reference : false_type {};
+
+    template <class T>
+    struct is_lvalue_reference<T&> : true_type {};
+
+    template <class T>
+    constexpr bool is_lvalue_reference_v = is_lvalue_reference<T>::value;
 }
