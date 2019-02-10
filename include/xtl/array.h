@@ -3,11 +3,12 @@
 #include <stddef.h>
 
 #include <xtl/algorithm.h>
+#include <xtl/utility.h>
 
 namespace xtl {
-    template <class T, size N>
+    template <class T, size_t N>
     class array {
-        static_assert(N > 0);
+        static_assert(N > 0, "Array size cannot be zero");
 
     public:
         using value_type = T;
@@ -20,15 +21,18 @@ namespace xtl {
         using iterator = pointer;
         using const_iterator = const iterator;
 
+        template <class... Ts>
+        constexpr array(Ts&&... values) : data_{xtl::forward<Ts>(values)...} {}
+
         template <size_t I>
         constexpr reference at() noexcept {
-            static_assert(I < N);
+            static_assert(I < N, "Array index cannot be greater than or equal to the size.");
             return data_[I];
         }
 
         template <size_t I>
         constexpr const_reference at() const noexcept {
-            static_assert(I < N);
+            static_assert(I < N, "Array index cannot be greater than or equal to the size.");
             return data_[I];
         }
 
@@ -45,12 +49,12 @@ namespace xtl {
         constexpr const_pointer data() const noexcept { return data_; }
 
         constexpr iterator begin() noexcept { return data(); }
-        constexpr const_iterator begin() const noexcept { return data(); }
-        constexpr const_iterator cbegin() const noexcept { return begin(); }
+        constexpr iterator begin() const noexcept { return data(); }
+        constexpr iterator cbegin() const noexcept { return begin(); }
 
         constexpr iterator end() noexcept { return data() + N; }
-        constexpr const_iterator end() const noexcept { return data() + N; }
-        constexpr const_iterator cend() const noexcept { return end(); }
+        constexpr iterator end() const noexcept { return data() + N; }
+        constexpr iterator cend() const noexcept { return end(); }
 
         constexpr size_t size() const { return N; }
         constexpr size_t max_size() const { return size(); }
@@ -62,8 +66,8 @@ namespace xtl {
     };
 
     template <size_t I, class T, size_t N>
-    constexpr T& get(array<T, N> &arr) noexcept { return arr.at<I>(); }
+    constexpr T& get(array<T, N> &arr) noexcept { return arr.template at<I>(); }
 
     template <size_t I, class T, size_t N>
-    constexpr const T& get(const array<T, N> &arr) noexcept { return arr.at<I>(); }
+    constexpr const T& get(const array<T, N> &arr) noexcept { return arr.template at<I>(); }
 }
