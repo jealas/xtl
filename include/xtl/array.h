@@ -7,7 +7,7 @@
 namespace xtl {
     template <class T, size_t N>
     class array {
-        static_assert(N > 0);
+        static_assert(N > 0, "Array size cannot be zero");
 
     public:
         using value_type = T;
@@ -22,13 +22,13 @@ namespace xtl {
 
         template <size_t I>
         constexpr reference at() noexcept {
-            static_assert(I < N);
+            static_assert(I < N, "Array index cannot be greater than or equal to the size.");
             return data_[I];
         }
 
         template <size_t I>
         constexpr const_reference at() const noexcept {
-            static_assert(I < N);
+            static_assert(I < N, "Array index cannot be greater than or equal to the size.");
             return data_[I];
         }
 
@@ -62,8 +62,8 @@ namespace xtl {
     };
 
     template <size_t I, class T, size_t N>
-    constexpr T& get(array<T, N> &arr) noexcept { return arr.at<I>(); }
+    constexpr T& get(array<T, N> &arr) noexcept { return arr.template at<I>(); }
 
     template <size_t I, class T, size_t N>
-    constexpr const T& get(const array<T, N> &arr) noexcept { return arr.at<I>(); }
+    constexpr const T& get(const array<T, N> &arr) noexcept { return arr.template at<I>(); }
 }
