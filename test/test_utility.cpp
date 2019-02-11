@@ -20,7 +20,7 @@ TEST_CASE("Can build integer sequences", "[xtl][utility]") {
 
     SECTION("int") {
         SECTION("non-empty sequence") {
-            REQUIRE(test_integer_sequence(xtl::make_integer_sequence<int, N>()) == N-1);
+            REQUIRE(test_integer_sequence(xtl::make_integer_sequence<int, N>()) == N);
         }
 
         SECTION("empty sequence") {
@@ -30,7 +30,7 @@ TEST_CASE("Can build integer sequences", "[xtl][utility]") {
 
     SECTION("size_t") {
         SECTION("non-empty sequence") {
-            REQUIRE(test_integer_sequence(xtl::make_integer_sequence<size_t, N>()) == N-1);
+            REQUIRE(test_integer_sequence(xtl::make_integer_sequence<size_t, N>()) == N);
         }
 
         SECTION("empty sequence") {
@@ -44,7 +44,7 @@ TEST_CASE("Can build index sequences", "[xtl][utility]") {
 
     SECTION("int") {
         SECTION("non-empty sequence") {
-            REQUIRE(test_integer_sequence(xtl::make_index_sequence<N>()) == N-1);
+            REQUIRE(test_integer_sequence(xtl::make_index_sequence<N>()) == N);
         }
 
         SECTION("empty sequence") {
@@ -55,7 +55,7 @@ TEST_CASE("Can build index sequences", "[xtl][utility]") {
 
 TEST_CASE("Index sequence for list of types returns correct index sequence", "[xtl][utility]") {
     SECTION("non-empty type list") {
-        REQUIRE(test_integer_sequence(xtl::index_sequence_for<char, short, int, long, double>()) == 4);
+        REQUIRE(test_integer_sequence(xtl::index_sequence_for<char, short, int, long, double>()) == 5);
     }
 
     SECTION("empty type list") {

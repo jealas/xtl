@@ -29,7 +29,7 @@ namespace xtl {
     }
 
     template <class T, T N>
-    using make_integer_sequence = typename detail::integer_sequence_builder<T, 0, N == 0 ? 0 : N - 1>::type;
+    using make_integer_sequence = typename detail::integer_sequence_builder<T, 0, N>::type;
 
     template <size_t N>
     using make_index_sequence = make_integer_sequence<size_t, N>;
